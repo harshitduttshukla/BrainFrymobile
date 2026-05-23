@@ -1,18 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
+export default function Index() {
   return (
     <View style={styles.container}>
-      <Text>HArashit </Text>
-      <StatusBar style="auto" />
+      <Text style={styles.text}>harshit Shukla</Text>
     </View>
   );
 }
-
-
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -20,5 +15,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text: {
+    fontSize: 16,
+    color: '#000',
   },
 });
