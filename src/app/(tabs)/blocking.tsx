@@ -50,7 +50,6 @@ export default function BlockingScreen() {
             <View key={app.id}>
               <View style={styles.appRow}>
                 <View style={[styles.appIconBg, { backgroundColor: app.color + '20' }]}>
-                  {/* Fallback to simple icon since logo icons exist in Ionicons */}
                   <Ionicons name={app.icon as any} size={20} color={app.color === '#000000' ? '#FFFFFF' : app.color} />
                 </View>
                 <View style={styles.appDetails}>
