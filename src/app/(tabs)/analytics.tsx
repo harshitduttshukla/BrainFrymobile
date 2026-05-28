@@ -1,20 +1,44 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useBlock } from '../../context/BlockContext';
 
 export default function AnalyticsScreen() {
-  const weeklyData = [
-    { day: 'Mon', hours: 4.5, percentage: 65, color: '#FF3B30' },
-    { day: 'Tue', hours: 3.2, percentage: 46, color: '#FF9500' },
-    { day: 'Wed', hours: 5.1, percentage: 73, color: '#FF3B30' },
-    { day: 'Thu', hours: 2.0, percentage: 28, color: '#34C759' },
-    { day: 'Fri', hours: 1.8, percentage: 25, color: '#34C759' },
-    { day: 'Sat', hours: 6.0, percentage: 86, color: '#FF3B30' },
-    { day: 'Sun', hours: 3.5, percentage: 50, color: '#FF9500' },
-  ];
+  const { shortsReelsBlocked } = useBlock();
+
+  const weeklyData = shortsReelsBlocked 
+    ? [
+        { day: 'Mon', hours: 3.0, percentage: 43, color: '#FF9500' },
+        { day: 'Tue', hours: 2.1, percentage: 30, color: '#34C759' },
+        { day: 'Wed', hours: 3.5, percentage: 50, color: '#FF9500' },
+        { day: 'Thu', hours: 1.2, percentage: 17, color: '#34C759' },
+        { day: 'Fri', hours: 1.0, percentage: 14, color: '#34C759' },
+        { day: 'Sat', hours: 4.0, percentage: 57, color: '#FF9500' },
+        { day: 'Sun', hours: 2.2, percentage: 31, color: '#34C759' },
+      ]
+    : [
+        { day: 'Mon', hours: 4.5, percentage: 65, color: '#FF3B30' },
+        { day: 'Tue', hours: 3.2, percentage: 46, color: '#FF9500' },
+        { day: 'Wed', hours: 5.1, percentage: 73, color: '#FF3B30' },
+        { day: 'Thu', hours: 2.0, percentage: 28, color: '#34C759' },
+        { day: 'Fri', hours: 1.8, percentage: 25, color: '#34C759' },
+        { day: 'Sat', hours: 6.0, percentage: 86, color: '#FF3B30' },
+        { day: 'Sun', hours: 3.5, percentage: 50, color: '#FF9500' },
+      ];
+
+  const brainHealthScore = shortsReelsBlocked ? '89%' : '72%';
+  const healthDiff = shortsReelsBlocked ? '+25% this week' : '+8% this week';
+  const scoreDesc = shortsReelsBlocked 
+    ? 'Outstanding focus! Blocking Reels & Shorts reduced your high-dopamine cravings and reclaimed 1.5+ hours daily.'
+    : 'Your brain was 8% less fried compared to last week. Good job keeping away from Reels!';
+
+  const breakdownData = shortsReelsBlocked
+    ? { shorts: '12%', feeds: '30%', productive: '58%' }
+    : { shorts: '58%', feeds: '27%', productive: '15%' };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -26,14 +50,14 @@ export default function AnalyticsScreen() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Average Brain Health Score</Text>
           <View style={styles.scoreRow}>
-            <Text style={styles.scoreNumber}>72%</Text>
+            <Text style={styles.scoreNumber}>{brainHealthScore}</Text>
             <View style={styles.badge}>
               <Ionicons name="trending-up" size={14} color="#34C759" style={{ marginRight: 4 }} />
-              <Text style={styles.badgeText}>+8% this week</Text>
+              <Text style={styles.badgeText}>{healthDiff}</Text>
             </View>
           </View>
           <Text style={styles.scoreDesc}>
-            Your brain was 8% less fried compared to last week. Good job keeping away from Reels!
+            {scoreDesc}
           </Text>
         </View>
 
@@ -61,21 +85,21 @@ export default function AnalyticsScreen() {
               <View style={[styles.bullet, { backgroundColor: '#FF3B30' }]} />
               <Text style={styles.breakdownLabel}>Short-form Videos (Reels/Shorts)</Text>
             </View>
-            <Text style={styles.breakdownValue}>58%</Text>
+            <Text style={styles.breakdownValue}>{breakdownData.shorts}</Text>
           </View>
           <View style={styles.breakdownRow}>
             <View style={styles.breakdownLabelContainer}>
               <View style={[styles.bullet, { backgroundColor: '#FF9500' }]} />
               <Text style={styles.breakdownLabel}>Social Feeds (Infinite Scroll)</Text>
             </View>
-            <Text style={styles.breakdownValue}>27%</Text>
+            <Text style={styles.breakdownValue}>{breakdownData.feeds}</Text>
           </View>
           <View style={styles.breakdownRow}>
             <View style={styles.breakdownLabelContainer}>
               <View style={[styles.bullet, { backgroundColor: '#34C759' }]} />
               <Text style={styles.breakdownLabel}>Productive Work & Study</Text>
             </View>
-            <Text style={styles.breakdownValue}>15%</Text>
+            <Text style={styles.breakdownValue}>{breakdownData.productive}</Text>
           </View>
         </View>
       </ScrollView>
@@ -90,6 +114,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 20,
+    paddingBottom: 100,
   },
   header: {
     marginBottom: 24,

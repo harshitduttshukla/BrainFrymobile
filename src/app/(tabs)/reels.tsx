@@ -1,13 +1,58 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Switch, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Switch, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useBlock } from '../../context/BlockContext';
+import { router } from 'expo-router';
 
 export default function ReelsScreen() {
+  const { shortsReelsBlocked, strictMode } = useBlock();
   const [frictionEnabled, setFrictionEnabled] = useState(true);
   const [sessionLimit, setSessionLimit] = useState(15);
 
+  if (shortsReelsBlocked) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+        <View style={styles.blockedContainer}>
+          <View style={styles.lockIconBg}>
+            <Ionicons name="lock-closed" size={32} color="#FF2D55" />
+          </View>
+          <Text style={styles.blockedTitle}>Dopamine Detox Active</Text>
+          <Text style={styles.blockedSubtitle}>
+            Short-form videos (Reels & YouTube Shorts) are currently blocked to protect your attention span and keep your mind clear.
+          </Text>
+
+          <View style={styles.blockedCard}>
+            <View style={styles.blockedCardHeader}>
+              <Ionicons name="shield-checkmark" size={20} color="#34C759" style={{ marginRight: 8 }} />
+              <Text style={styles.blockedCardTitle}>Focus Guard Engaged</Text>
+            </View>
+            <Text style={styles.blockedCardDesc}>
+              By blocking Reels and Shorts, you save an average of 45 minutes of screen time daily. Focus on what truly matters!
+            </Text>
+          </View>
+
+          {strictMode ? (
+            <View style={styles.strictModeBadge}>
+              <Ionicons name="shield-half" size={16} color="#FF9500" style={{ marginRight: 6 }} />
+              <Text style={styles.strictModeText}>Strict Mode is Active — No unblocking allowed</Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.configureButton}
+              onPress={() => router.push('/(tabs)/blocking')}
+            >
+              <Text style={styles.configureButtonText}>Configure Settings</Text>
+              <Ionicons name="arrow-forward" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -86,6 +131,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 20,
+    paddingBottom: 100,
     flex: 1,
   },
   header: {
@@ -194,5 +240,95 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#2C2C2E',
     marginVertical: 12,
+  },
+  blockedContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    paddingBottom: 100,
+    backgroundColor: '#000000',
+  },
+  lockIconBg: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: 'rgba(255, 45, 85, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 45, 85, 0.2)',
+  },
+  blockedTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  blockedSubtitle: {
+    fontSize: 14,
+    color: '#8E8E93',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 32,
+    paddingHorizontal: 12,
+  },
+  blockedCard: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2C2C2E',
+    width: '100%',
+    marginBottom: 32,
+  },
+  blockedCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  blockedCardTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  blockedCardDesc: {
+    fontSize: 13,
+    color: '#8E8E93',
+    lineHeight: 18,
+  },
+  configureButton: {
+    backgroundColor: '#FF2D55',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 12,
+    width: '100%',
+  },
+  configureButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  strictModeBadge: {
+    backgroundColor: 'rgba(255, 149, 0, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 149, 0, 0.2)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    width: '100%',
+  },
+  strictModeText: {
+    color: '#FF9500',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

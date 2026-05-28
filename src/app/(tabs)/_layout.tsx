@@ -1,8 +1,13 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
+import { useBlock } from '../../context/BlockContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
+  const { shortsReelsBlocked } = useBlock();
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
@@ -12,8 +17,8 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: '#1C1C1E', // Modern dark theme
           borderTopColor: '#2C2C2E',
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 30 : 10,
+          height: Platform.OS === 'ios' ? 88 : (60 + (insets.bottom > 0 ? insets.bottom - 10 : 0)),
+          paddingBottom: Platform.OS === 'ios' ? 30 : (insets.bottom > 0 ? insets.bottom : 10),
           paddingTop: 10,
         },
         tabBarLabelStyle: {
@@ -31,15 +36,17 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="reels"
-        options={{
-          title: 'Reels',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'film' : 'film-outline'} size={size} color={color} />
-          ),
-        }}
-      />
+      {!shortsReelsBlocked && (
+        <Tabs.Screen
+          name="reels"
+          options={{
+            title: 'Reels',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'film' : 'film-outline'} size={size} color={color} />
+            ),
+          }}
+        />
+      )}
       <Tabs.Screen
         name="blocking"
         options={{

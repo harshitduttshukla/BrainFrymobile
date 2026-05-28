@@ -1,10 +1,24 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useBlock } from '../../context/BlockContext';
 
 export default function HomeScreen() {
+  const { shortsReelsBlocked, strictMode, apps } = useBlock();
+
+  // Dynamic statistics based on whether Reels blocker is active
+  const screenTime = shortsReelsBlocked ? '1h 00m' : '1h 45m';
+  const blocksTriggered = shortsReelsBlocked ? '19' : '12';
+  const brainFryPercentage = shortsReelsBlocked ? '20%' : '35%';
+  const brainFryText = shortsReelsBlocked ? '20% Fried' : '35% Fried';
+  const brainFryStatus = shortsReelsBlocked ? 'Status: Cool and Collected 🧊' : 'Status: Mildly Roasted ☕';
+
+  const activeApps = apps.filter(app => app.blocked);
+  const totalActiveBlockers = (shortsReelsBlocked ? 1 : 0) + (strictMode ? 1 : 0) + activeApps.length;
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -22,23 +36,51 @@ export default function HomeScreen() {
           <Text style={styles.heroTitle}>Brain Fry Level</Text>
           <View style={styles.progressContainer}>
             <View style={styles.progressBarBackground}>
-              <View style={[styles.progressBarFill, { width: '35%' }]} />
+              <View style={[styles.progressBarFill, { width: brainFryPercentage }]} />
             </View>
-            <Text style={styles.progressText}>35% Fried</Text>
+            <Text style={styles.progressText}>{brainFryText}</Text>
           </View>
-          <Text style={styles.heroStatus}>Status: Mildly Roasted ☕</Text>
+          <Text style={styles.heroStatus}>{brainFryStatus}</Text>
+        </View>
+
+        {/* Focus Guards (Active Blockers Status) */}
+        <View style={styles.activeBlockersCard}>
+          <Text style={styles.activeBlockersTitle}>Active Focus Guards</Text>
+          <View style={styles.badgeRow}>
+            {shortsReelsBlocked && (
+              <View style={[styles.statusBadge, { backgroundColor: 'rgba(255, 45, 85, 0.15)' }]}>
+                <Ionicons name="videocam-off" size={14} color="#FF2D55" style={{ marginRight: 4 }} />
+                <Text style={[styles.statusBadgeText, { color: '#FF2D55' }]}>Reels/Shorts Blocked</Text>
+              </View>
+            )}
+            {strictMode && (
+              <View style={[styles.statusBadge, { backgroundColor: 'rgba(255, 149, 0, 0.15)' }]}>
+                <Ionicons name="shield-half" size={14} color="#FF9500" style={{ marginRight: 4 }} />
+                <Text style={[styles.statusBadgeText, { color: '#FF9500' }]}>Strict Mode Active</Text>
+              </View>
+            )}
+            {activeApps.map(app => (
+              <View key={app.id} style={[styles.statusBadge, { backgroundColor: app.color + '20' }]}>
+                <Ionicons name={app.icon as any} size={14} color={app.color === '#000000' ? '#FFFFFF' : app.color} style={{ marginRight: 4 }} />
+                <Text style={[styles.statusBadgeText, { color: app.color === '#000000' ? '#FFFFFF' : app.color }]}>{app.name}</Text>
+              </View>
+            ))}
+            {totalActiveBlockers === 0 && (
+              <Text style={styles.noBlockersText}>No active focus guards. Your attention is vulnerable!</Text>
+            )}
+          </View>
         </View>
 
         {/* Quick Stats Grid */}
         <View style={styles.grid}>
           <View style={styles.gridCard}>
             <Ionicons name="time-outline" size={24} color="#FF9500" />
-            <Text style={styles.cardValue}>1h 45m</Text>
+            <Text style={styles.cardValue}>{screenTime}</Text>
             <Text style={styles.cardLabel}>Screen Time</Text>
           </View>
           <View style={styles.gridCard}>
             <Ionicons name="ban-outline" size={24} color="#FF3B30" />
-            <Text style={styles.cardValue}>12</Text>
+            <Text style={styles.cardValue}>{blocksTriggered}</Text>
             <Text style={styles.cardLabel}>Blocks Triggered</Text>
           </View>
         </View>
@@ -48,9 +90,15 @@ export default function HomeScreen() {
           <Ionicons name="bulb-outline" size={24} color="#34C759" />
           <View style={styles.tipContent}>
             <Text style={styles.tipTitle}>Brain Saver Tip</Text>
-            <Text style={styles.tipDescription}>
-              You spent 45 minutes on Reels this morning. Try taking a 5-minute screen-free walk.
-            </Text>
+            {shortsReelsBlocked ? (
+              <Text style={styles.tipDescription}>
+                Shorts & Reels Blocker is active! Excellent choice. Your focus has been protected from high-dopamine loops today.
+              </Text>
+            ) : (
+              <Text style={styles.tipDescription}>
+                You spent 45 minutes on Reels this morning. Try enabling the Reels & Shorts Blocker in the Blocking tab to protect your focus.
+              </Text>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -65,6 +113,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 20,
+    paddingBottom: 100,
   },
   header: {
     flexDirection: 'row',
@@ -127,6 +176,41 @@ const styles = StyleSheet.create({
   heroStatus: {
     fontSize: 14,
     color: '#8E8E93',
+  },
+  activeBlockersCard: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2C2C2E',
+    marginBottom: 20,
+  },
+  activeBlockersTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 12,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  statusBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  noBlockersText: {
+    fontSize: 13,
+    color: '#8E8E93',
+    fontStyle: 'italic',
   },
   grid: {
     flexDirection: 'row',
