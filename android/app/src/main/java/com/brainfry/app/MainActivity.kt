@@ -1,4 +1,4 @@
-package com.brainfry.app
+package com.brainfrymobile
 
 import android.os.Build
 import android.os.Bundle

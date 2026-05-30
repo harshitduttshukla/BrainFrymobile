@@ -1,20 +1,19 @@
 {
   "expo": {
-    "name": "BrainFry",
-    "slug": "brainfry",
+    "name": "BrainFrymobile",
+    "slug": "BrainFrymobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "brainfry",
+    "scheme": "brainfrymobile",
     "icon": "./src/assets/images/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true,
-      "icon": "./src/assets/images/icon.png"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.brainfry.app",
+      "package": "com.brainfrymobile",
       "adaptiveIcon": {
-        "backgroundColor": "#1A1A2E",
+        "backgroundColor": "#E6F4FE",
         "foregroundImage": "./src/assets/images/android-icon-foreground.png",
         "backgroundImage": "./src/assets/images/android-icon-background.png",
         "monochromeImage": "./src/assets/images/android-icon-monochrome.png"
@@ -30,7 +29,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "538e463b-5da8-41cc-b445-2fb7879b269d"
+        "projectId": "22a1d3dc-cb40-49d9-a762-acafd07bcba0"
       }
     }
   }

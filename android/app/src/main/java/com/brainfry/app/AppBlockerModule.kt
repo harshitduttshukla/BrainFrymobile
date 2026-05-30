@@ -1,4 +1,4 @@
-package com.brainfry.app
+package com.brainfrymobile
 
 import android.content.Context
 import android.content.Intent

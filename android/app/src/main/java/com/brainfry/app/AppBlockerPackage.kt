@@ -1,4 +1,4 @@
-package com.brainfry.app
+package com.brainfrymobile
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

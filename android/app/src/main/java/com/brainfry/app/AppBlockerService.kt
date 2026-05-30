@@ -1,4 +1,4 @@
-package com.brainfry.app
+package com.brainfrymobile
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
